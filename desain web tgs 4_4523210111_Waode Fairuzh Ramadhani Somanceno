@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>My To-Do List</h1>
+    <div style="display: flex; align-items: center;"></div>
+    <input type="text" id="task-input" placeholder="Enter a new task">
+    <button id="add-task-btn">Add</button>
+
+    <h3>Filter Tasks</h3>
+    <button onclick="filterTasks('all')">All</button>
+    <button onclick="filterTasks('active')">Active</button>
+    <button onclick="filterTasks('completed')">Completed</button>
+
+    <ul id="task-list"></ul>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 600px;
+    background-color: #f4e5e5;
+    background-image: url(https://i.pinimg.com/736x/2d/69/d1/2d69d1d723a3d2c0df573edd6273e779.jpg);
+    background-size: cover;
+    }
+h1 {
+    text-align: center;
+    color: rgb(132, 196, 196);
+    }
+h3 {
+    font-family: 'Courier New', Courier, monospace;
+    color: rgb(132, 196, 196);
+    font-size: x-large;
+    }
+#task-input {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    }
+#add-task-btn {
+    padding: 10px;
+    font-size: 16px;
+    text-align: center;
+    }
+ul {
+    list-style-type: none;
+    padding: 0;
+    }
+li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ffc4dd;
+    }
+li.completed {
+    text-decoration: line-through;
+    }
+ul li:nth-child(odd) {
+    background: #ebe8d7db;
+    }
+button {
+    margin-left: 10px;
+    margin-top: 5px;
+    padding: 10px;
+    text-align: left;
+    background-color: #ffc4dd;
+    border-radius: 10px;
+}
+
+class Task {
+    constructor(name) {
+        this.name = name;
+        this.completed = false;
+    }
+
+    toggleCompleted() {
+        this.completed = !this.completed;
+    }
+}
+
+//Fungsi Menambahkan Tugas
+let tasks = [];
+
+function addTask() {
+    const taskInput = document.getElementById('task-input');
+    const taskName = taskInput.value.trim();
+
+    if (taskName === "") {
+        alert("Task cannot be empty!");
+        return;
+    }
+
+    const task = new Task(taskName);
+    tasks.push(task);
+    displayTasks();
+    taskInput.value = ''; // Kosongkan input setelah menambahkan
+}
+
+document.getElementById('add-task-btn').addEventListener('click', addTask);
+
+
+//Menampilkan Tugas DOM
+function displayTasks() {
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = '';
+
+    tasks.forEach((task, index) => {
+        const taskItem = document.createElement('li');
+        taskItem.className = task.completed ? 'completed' : '';
+
+        const taskText = document.createElement('span');
+        taskText.textContent = task.name;
+        
+        const taskCheckbox = document.createElement('input');
+        taskCheckbox.type = 'checkbox';
+        taskCheckbox.checked = task.completed;
+        taskCheckbox.addEventListener('click', () => toggleTask(index));
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => deleteTask(index));
+
+        taskItem.appendChild(taskCheckbox);
+        taskItem.appendChild(taskText);
+        taskItem.appendChild(deleteButton);
+
+        taskList.appendChild(taskItem);
+    });
+}
+
+//Menandai Tugas Selesai dan Menghapus Tugas
+function toggleTask(index) {
+    tasks[index].toggleCompleted();
+    displayTasks();
+}
+
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    displayTasks();
+}
+
+//Filter Tugas Berdasarkan Status
+function filterTasks(filter) {
+    let filteredTasks = tasks;
+
+    if (filter === 'active') {
+        filteredTasks = tasks.filter(task => !task.completed);
+    } else if (filter === 'completed') {
+        filteredTasks = tasks.filter(task => task.completed);
+    }
+
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = '';
+
+    filteredTasks.forEach((task, index) => {
+        const taskItem = document.createElement('li');
+        taskItem.className = task.completed ? 'completed' : '';
+
+        const taskText = document.createElement('span');
+        taskText.textContent = task.name;
+        
+        const taskCheckbox = document.createElement('input');
+        taskCheckbox.type = 'checkbox';
+        taskCheckbox.checked = task.completed;
+        taskCheckbox.addEventListener('click', () => toggleTask(index));
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => deleteTask(index));
+
+        taskItem.appendChild(taskCheckbox);
+        taskItem.appendChild(taskText);
+        taskItem.appendChild(deleteButton);
+
+        taskList.appendChild(taskItem);
+    });
+}
